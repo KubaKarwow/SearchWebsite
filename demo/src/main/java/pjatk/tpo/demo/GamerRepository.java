@@ -33,7 +33,7 @@ public class GamerRepository
         statement.setInt(8, regionalTrophies);
         statement.setInt(9, internationalTrophies);
         InputStream inputStream = new FileInputStream(imageFile);
-            statement.setBlob(10, inputStream);
+        statement.setBlob(10, inputStream);
 
         statement.executeUpdate();
     }
