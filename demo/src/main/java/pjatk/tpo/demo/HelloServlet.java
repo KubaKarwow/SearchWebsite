@@ -5,6 +5,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.*;
 import java.util.Base64;
+import java.util.Map;
 
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
@@ -141,17 +142,54 @@ public class HelloServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         //init();
         response.setContentType("text/html");
+
+        Map<String, String[]> parameterMap = request.getParameterMap();
+        int ageMin = Integer.parseInt(parameterMap.get("age_min")[0]);
+        int ageMax = Integer.parseInt(parameterMap.get("age_max")[0]);
+        int regional_trophies_min = Integer.parseInt(parameterMap.get("regional_trophies_min")[0]);
+        int regional_trophies_max = Integer.parseInt(parameterMap.get("regional_trophies_max")[0]);
+        int international_trophies_min = Integer.parseInt(parameterMap.get("international_trophies_min")[0]);
+        int international_trophies_max = Integer.parseInt(parameterMap.get("international_trophies_max")[0]);
+        String region = parameterMap.get("region")[0];
+        String sortBy = parameterMap.get("sort")[0];
+        for (String s : parameterMap.keySet()) {
+            System.out.println("key:"+s);
+            System.out.println("values");
+            for (String string : parameterMap.get(s)) {
+                System.out.println("value:"+string);
+            }
+        }
         PrintWriter out = response.getWriter();
         out.println("<html><body>");
+        System.out.println(ageMin);
+        System.out.println(ageMax);
+        System.out.println(regional_trophies_min);
+        System.out.println(regional_trophies_max);
+        System.out.println(international_trophies_min);
+        System.out.println(international_trophies_max);
+        System.out.println(region);
+        System.out.println("SELECT * FROM GAMER WHERE AGE>="+ageMin+" AND AGE<="+ageMax+" AND " +
+                "REGIONALWINS>="+regional_trophies_min+" AND REGIONALWINS<="+regional_trophies_max+" AND INTERNATIONALWINS>=" +international_trophies_min+
+                " AND INTERNATIONALWINS<="+international_trophies_max+" AND REGION="+region+" ORDER BY "+sortBy);
         try {
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM GAMER");
+            String sql = "SELECT * FROM GAMER WHERE AGE>=? AND AGE<=? AND " +
+                    "REGIONALWINS>=? AND REGIONALWINS<=? AND INTERNATIONALWINS>=? " +
+                    " AND INTERNATIONALWINS<=? AND REGION=? "+" ORDER BY "+sortBy;
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1,ageMin);
+            statement.setInt(2,ageMax);
+            statement.setInt(3,regional_trophies_min);
+            statement.setInt(4,regional_trophies_max);
+            statement.setInt(5,international_trophies_min);
+            statement.setInt(6,international_trophies_max);
+            statement.setString(7,region);
+            ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 sendFormattedResponse(out,resultSet);
             }
             out.println("<html></body>");
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
     private void sendFormattedResponse(PrintWriter out, ResultSet resultSet) throws SQLException, IOException {
