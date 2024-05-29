@@ -21,7 +21,11 @@ public class HelloServlet extends HttpServlet {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        gamerRepository = new GamerRepository(connection);
+        try {
+            gamerRepository = new GamerRepository(connection);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         try {
             gamerRepository.initializeDB();
 
@@ -32,7 +36,7 @@ public class HelloServlet extends HttpServlet {
     }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        //init();
+
         response.setContentType("text/html");
 
         Map<String, String[]> parameterMap = request.getParameterMap();
@@ -44,29 +48,27 @@ public class HelloServlet extends HttpServlet {
         int international_trophies_max = Integer.parseInt(parameterMap.get("international_trophies_max")[0]);
         String region = parameterMap.get("region")[0];
         String sortBy = parameterMap.get("sort")[0];
-        for (String s : parameterMap.keySet()) {
-            System.out.println("key:" + s);
-            System.out.println("values");
-            for (String string : parameterMap.get(s)) {
-                System.out.println("value:" + string);
-            }
-        }
+
         PrintWriter out = response.getWriter();
         out.println("<html><body>");
-        System.out.println(ageMin);
-        System.out.println(ageMax);
-        System.out.println(regional_trophies_min);
-        System.out.println(regional_trophies_max);
-        System.out.println(international_trophies_min);
-        System.out.println(international_trophies_max);
-        System.out.println(region);
-        System.out.println("SELECT * FROM GAMER WHERE AGE>=" + ageMin + " AND AGE<=" + ageMax + " AND " +
-                "REGIONALWINS>=" + regional_trophies_min + " AND REGIONALWINS<=" + regional_trophies_max + " AND INTERNATIONALWINS>=" + international_trophies_min +
-                " AND INTERNATIONALWINS<=" + international_trophies_max + " AND REGION=" + region + " ORDER BY " + sortBy);
         try {
-            String sql = "SELECT * FROM GAMER WHERE AGE>=? AND AGE<=? AND " +
-                    "REGIONALWINS>=? AND REGIONALWINS<=? AND INTERNATIONALWINS>=? " +
-                    " AND INTERNATIONALWINS<=? AND REGION=? " + " ORDER BY " + sortBy;
+            String sql = "SELECT GAMER.NAME, " +
+                    "GAMER.SURNAME, " +
+                    "GAMER.NICK, " +
+                    "GAMER.AGE, " +
+                    "TEAM.NAME, " +
+                    "ISIN.JOINED, " +
+                    "TEAM.REGION, " +
+                    "GAMER.REGIONALWINS, " +
+                    "GAMER.INTERNATIONALWINS, " +
+                    "GAMER.PHOTO " +
+                    "FROM GAMER " +
+                    "JOIN ISIN ON ISIN.PLAYERID=GAMER.ID " +
+                    "JOIN TEAM ON TEAM.ID=ISIN.TEAMID " +
+                    "WHERE AGE>=? AND AGE<=? AND " +
+                    "REGIONALWINS>=? AND REGIONALWINS<=? AND " +
+                    "INTERNATIONALWINS>=? AND INTERNATIONALWINS<=? " +
+                    "AND REGION=? " + " ORDER BY " + sortBy;
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, ageMin);
             statement.setInt(2, ageMax);
@@ -76,8 +78,10 @@ public class HelloServlet extends HttpServlet {
             statement.setInt(6, international_trophies_max);
             statement.setString(7, region);
             ResultSet resultSet = statement.executeQuery();
+            System.out.println(resultSet.getFetchSize() + " AMOUNT OF RECORDS");
             while (resultSet.next()) {
                 sendFormattedResponse(out, resultSet);
+                System.out.println("ANOTHER RESPONSE");
             }
             out.println("<html></body>");
         } catch (SQLException e) {
@@ -104,22 +108,22 @@ public class HelloServlet extends HttpServlet {
     private String getProperResponse(int columnIndex) {
         switch (columnIndex) {
             case 1 -> {
-                return "ID";
-            }
-            case 2 -> {
                 return "Name";
             }
-            case 3 -> {
+            case 2 -> {
                 return "Surname";
             }
-            case 4 -> {
+            case 3 -> {
                 return "Nick";
             }
-            case 5 -> {
+            case 4 -> {
                 return "Age";
             }
-            case 6 -> {
+            case 5 -> {
                 return "Current team";
+            }
+            case 6 -> {
+                return "Joined";
             }
             case 7 -> {
                 return "Region";
