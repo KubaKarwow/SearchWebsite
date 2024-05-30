@@ -6,7 +6,7 @@
     <title>Testowanie</title>
 </head>
 <body>
-<div style="text-align: center;"><h2>Testowanie parametrów</h2></div>
+<div style="text-align: center;"><h2>Get records with:</h2></div>
 <hr>
 <div style="text-align: center;">
     <form method="get" action="http://localhost:8080/demo_war_exploded/hello-servlet">
@@ -29,7 +29,7 @@
         <input type="radio" id="China" name="region" value="China">
         <label for="China">China</label><br>
         <br>
-        <h3>Sortuj po:</h3>
+        <h3>Sort by:</h3>
         <input type="radio" id="Age" name="sort" value="AGE" checked>
         <label for="Age">Age</label>
 
