@@ -61,7 +61,7 @@ public class HelloServlet extends HttpServlet {
                     "TEAM.REGION, " +
                     "GAMER.REGIONALWINS, " +
                     "GAMER.INTERNATIONALWINS, " +
-                    "GAMER.PHOTO " +
+                    "GAMER.PHOTOPATH " +
                     "FROM GAMER " +
                     "JOIN ISIN ON ISIN.PLAYERID=GAMER.ID " +
                     "JOIN TEAM ON TEAM.ID=ISIN.TEAMID " +
@@ -95,12 +95,7 @@ public class HelloServlet extends HttpServlet {
             out.println("<h3>" + getProperResponse(i) + ":" + resultSet.getString(i) + "</h3>");
         }
         sbd = new StringBuilder();
-        Blob photo = resultSet.getBlob("PHOTO");
-        if (photo != null) {
-            byte[] photoBytes = blobToBytes(photo);
-            String base64Image = Base64.getEncoder().encodeToString(photoBytes);
-            sbd.append("<img src='data:image/jpeg;base64,").append(base64Image).append("' />");
-        }
+        sbd.append("<img src='"+resultSet.getString("PHOTOPATH")+"'/>");
         out.println("<h3>" + sbd.toString() + "</h3>");
 
     }
