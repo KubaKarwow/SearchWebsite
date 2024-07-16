@@ -1,12 +1,25 @@
-# TPO6
+# SearchWebsite
 
-    Napisać aplikację WEB pozwalającą na przeglądanie i wyszukiwanie czegokolwiek w bazie danych czegokolwiek. 
-Baza danych -   dowolna.
-Technologie webowe (serwlety) - z wykładu o Aplikacjach WEB.
-Wymagania na max punktów: 
-- nietrywialne wyszukiwanie (więcej niż jedno pole)
-Wymagania na dodatkowe punkty: 
-- własne dane (nie książki z wykładu) 
-- więcej niż jedna tabela 
-- zaawansowane wyszukiwanie (kilka pól, zaczyna się od, zakres od-do) 
-- estetyczna w ocenie prowadzącego szata graficzna. 
+This project is a web application built using Java Servlets and an embedded Derby database. It allows users to browse and search information about professional League of Legends players and teams.
+
+Features
+Browse Players: View a list of all professional players stored in the database.
+
+Search Players: Perform advanced searches based on player attributes such as name, team, role, country, and birthdate.
+
+Browse Teams: View details about teams and their rosters.
+
+Dynamic Filtering: Filter and sort player information based on various criteria.
+
+Esthetic User Interface: Designed with HTML and CSS to provide a visually appealing user experience.
+
+
+
+Technologies Used
+Java Servlets: Backend processing and handling HTTP requests.
+
+Embedded Derby Database: Local database management for storing player and team data.
+
+HTML/CSS: Frontend presentation and styling for user interface.
+
+SQL: Structured Query Language for database operations and queries.
